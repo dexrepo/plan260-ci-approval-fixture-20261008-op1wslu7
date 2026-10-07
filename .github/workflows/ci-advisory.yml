@@ -1,0 +1,20 @@
+name: PLAN260 approval boundary
+on:
+  workflow_dispatch:
+permissions: read-all
+jobs:
+  test-changed-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: bash scripts/check.sh
+  privileged:
+    needs: test-changed-script
+    runs-on: ubuntu-latest
+    environment: plan260-approval
+    permissions:
+      contents: write
+    env:
+      FIXTURE_ONLY: ${{ secrets.PLAN260_NONEXISTENT_FIXTURE }}
+    steps:
+      - run: printf 'PLAN260 harmless privileged step\n'
